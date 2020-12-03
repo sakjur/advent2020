@@ -1,17 +1,9 @@
 package advent2020
 
-import (
-	"bufio"
-	"context"
-	"io"
-	"log"
-	"strconv"
-)
-
 func FindAddPair(numbers <-chan int, target int) (int, int) {
 	existing := map[int]struct{}{}
 	for number := range numbers {
-		if _, exists := existing[target - number]; exists {
+		if _, exists := existing[target-number]; exists {
 			return number, target - number
 		}
 
@@ -35,7 +27,7 @@ func FindAddTrio(numbers <-chan int, target int) (int, int, int) {
 		}
 
 		for _, n := range existing {
-			sum := n+number
+			sum := n + number
 			if sum > target {
 				continue
 			}
@@ -46,38 +38,4 @@ func FindAddTrio(numbers <-chan int, target int) (int, int, int) {
 	}
 
 	return 0, 0, 0
-}
-
-func StreamInts(ctx context.Context, r io.Reader) (<- chan int) {
-	scan := bufio.NewScanner(r)
-	scan.Split(bufio.ScanLines)
-	channel := make(chan int, 1024)
-
-	go func() {
-		loop: for {
-			select {
-			case <-ctx.Done():
-				break loop
-			default:
-				if read := scan.Scan(); !read {
-					if scan.Err() != nil {
-						log.Printf("got error: %v\n", scan.Err())
-					}
-					break loop
-				}
-
-				token := scan.Text()
-				number, err := strconv.Atoi(token)
-				if err != nil {
-					log.Println("got non-numeric line: ", err)
-					continue
-				}
-
-				channel <- number
-			}
-		}
-		close(channel)
-	}()
-
-	return channel
 }

@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/sakjur/advent2020"
 	"io"
 	"os"
 	"testing"
+
+	"github.com/sakjur/advent2020"
 )
 
 func TestDay1_Task1(t *testing.T) {
@@ -16,10 +17,10 @@ func TestDay1_Task1(t *testing.T) {
 		t.Fatalf("got error: %v\n", err)
 	}
 
-	tests := []struct{
-		target int
-		reader io.Reader
-		expectedFirst int
+	tests := []struct {
+		target         int
+		reader         io.Reader
+		expectedFirst  int
 		expectedSecond int
 	}{
 		{
@@ -29,9 +30,9 @@ func TestDay1_Task1(t *testing.T) {
 			expectedSecond: 299,
 		},
 		{
-			target: 2020,
-			reader: f,
-			expectedFirst: 473,
+			target:         2020,
+			reader:         f,
+			expectedFirst:  473,
 			expectedSecond: 1547,
 		},
 	}
@@ -45,7 +46,7 @@ func TestDay1_Task1(t *testing.T) {
 			a, b := advent2020.FindAddPair(c, tc.target)
 			cancel()
 
-			if a + b != tc.target {
+			if a+b != tc.target {
 				t.Errorf("a = %d, b = %d. Expected a+b=%d, got %d", a, b, tc.target, a+b)
 			}
 			elementOf(t, []int{tc.expectedFirst, tc.expectedSecond}, a, b)
@@ -53,7 +54,6 @@ func TestDay1_Task1(t *testing.T) {
 			t.Logf("%d = %d * %d", a*b, a, b)
 		})
 	}
-
 }
 
 func TestDay1_Task2(t *testing.T) {
