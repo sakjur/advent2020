@@ -30,7 +30,7 @@ func TestDay4(t *testing.T) {
 		{
 			reader:       fReal,
 			fieldsExists: 247,
-			valid:        0,
+			valid:        145,
 		},
 	}
 
