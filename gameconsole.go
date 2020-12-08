@@ -2,7 +2,6 @@ package advent2020
 
 import (
 	"fmt"
-	"math"
 	"strconv"
 )
 
@@ -15,30 +14,23 @@ func GameConsoleDetectLoop(ops []Op) (int, bool) {
 	acc := 0
 	visited := make([]bool, len(ops))
 
-	incr := 1
+	var incr int
 	for i := 0; i < len(ops); i += incr {
 		incr = 1
 
-		if i < 0 {
-			return math.MinInt64, false
-		}
-
-		instr := ops[i]
-		if visited[i] {
+		if i < 0 || visited[i] {
 			return acc, false
 		}
+		visited[i] = true
 
-		switch instr.Operator {
+		switch op := ops[i]; op.Operator {
+		case "acc":
+			acc += op.Argument
+		case "jmp":
+			incr = op.Argument
 		case "nop":
 			// noop
-		case "acc":
-			acc += instr.Argument
-		case "jmp":
-			// subtracting one because loop increments by one
-			incr = instr.Argument
 		}
-
-		visited[i] = true
 	}
 	return acc, true
 }
@@ -52,17 +44,14 @@ func GameConsoleAutoPatcher(ops []Op) (int, bool) {
 		cpy := make([]Op, len(ops))
 		copy(cpy, ops)
 
-		switch op.Operator {
-		case "nop":
-			cpy[i] = Op{
-				Operator: "jmp",
-				Argument: op.Argument,
-			}
-		case "jmp":
-			cpy[i] = Op{
-				Operator: "nop",
-				Argument: op.Argument,
-			}
+		newOp := "nop"
+		if op.Operator == "nop" {
+			newOp = "jmp"
+		}
+
+		cpy[i] = Op{
+			Operator: newOp,
+			Argument: op.Argument,
 		}
 		acc, ok := GameConsoleDetectLoop(cpy)
 		if ok {
@@ -79,19 +68,14 @@ func GameConsoleOps(c <-chan string) ([]Op, error) {
 		if len(rawOp) < 6 {
 			return nil, fmt.Errorf("expected instruction to be at least 6 chars long: %s", rawOp)
 		}
-		op := rawOp[:3]
-		rawArg := rawOp[4:]
 
-		if rawArg[0] == '+' {
-			rawArg = rawArg[1:]
-		}
-		arg, err := strconv.Atoi(rawArg)
+		arg, err := strconv.Atoi(rawOp[4:])
 		if err != nil {
 			return nil, err
 		}
 
 		ops = append(ops, Op{
-			Operator: op,
+			Operator: rawOp[:3],
 			Argument: arg,
 		})
 	}
