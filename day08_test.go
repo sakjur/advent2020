@@ -33,7 +33,7 @@ func TestDay8(t *testing.T) {
 		{
 			reader:   fReal,
 			crashAcc: 1087,
-			fixedAcc: 0,
+			fixedAcc: 780,
 		},
 	}
 
